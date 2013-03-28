@@ -2,7 +2,7 @@
 	name = Zac Colley
 	email = hi@zaccolley.com
 [alias]
-  nuke = checkout -- *
+  nuke = checkout --
   c = commit -am
   s = status -s
   df = diff --color --color-words --abbrev
