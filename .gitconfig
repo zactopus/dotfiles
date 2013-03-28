@@ -1,6 +1,6 @@
 [user]
-	name = Zac Colley
-	email = hi@zaccolley.com
+  name = Zac Colley
+  email = hi@zaccolley.com
 [alias]
   nuke = checkout --
   c = commit -am
@@ -24,3 +24,5 @@
   untracked = cyan
 [merge]
   log = true
+[credential]
+  helper = cache
