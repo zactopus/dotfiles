@@ -1,0 +1,6 @@
+# lazy cding
+alias cdwww='cd ~ && cd ../../var/www'
+
+#ssh
+alias sshmain='ssh zac@zaccolley.com -i ~/.ssh/main.ssh'
+alias sshuni='ssh up665219@myfiles.port.ac.uk'
