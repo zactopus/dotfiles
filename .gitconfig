@@ -2,8 +2,6 @@
   name = Zac Colley
   email = hi@zaccolley.com
 [alias]
-  nuke = checkout --
-  c = commit -am
   s = status -s
   df = diff --color --color-words --abbrev
   lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
