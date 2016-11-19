@@ -1,3 +1,7 @@
+# wget sucks with certificates. Let's keep it simple.
+alias wget="curl -O"
+
+# bring in file to 'style' the bash prompt
 source ~/.bash_prompt
 
 # z beats cd most of the time.
