@@ -1,135 +1,15 @@
-default_username='zac'
+source ~/.bash_prompt
 
-if which thefuck > /dev/null; then
-    eval "$(thefuck --alias)"
-fi;
+# z beats cd most of the time.
+#   github.com/rupa/z
+source ~/.scripts/z.sh
 
-if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-    export TERM=gnome-256color
-elif infocmp xterm-256color >/dev/null 2>&1; then
-    export TERM=xterm-256color
-fi
+##
+## better `cd`'ing
+##
 
-set_prompts() {
+# Case-insensitive globbing (used in pathname expansion)
+shopt -s nocaseglob;
 
-    local black="" blue="" bold="" cyan="" green="" orange="" \
-          purple="" red="" reset="" white="" yellow=""
-
-    local dateCmd=""
-
-    reset="\e[0m"
-
-    black="\e[1;30m"
-    blue="\e[1;34m"
-    cyan="\e[1;36m"
-    green="\e[1;32m"
-    orange="\e[1;33m"
-    purple="\e[1;35m"
-    red="\e[1;31m"
-    magenta="\e[1;31m"
-    violet="\e[1;35m"
-    white="\e[1;37m"
-    yellow="\e[1;33m"
-
-    # Only show username/host if not default
-    function usernamehost() {
-
-        # Highlight the user name when logged in as root.
-        if [[ "${USER}" == *"root" ]]; then
-            userStyle="${red}";
-        else
-            userStyle="${magenta}";
-        fi;
-
-        userhost=""
-        userhost+="\[${userStyle}\]$USER "
-        userhost+="${white}at "
-        userhost+="${orange}$HOSTNAME "
-        userhost+="${white}in"
-
-        if [ $USER != "$default_username" ]; then echo $userhost ""; fi
-    }
-
-
-    function prompt_git() {
-        local s='';
-        # this is >5x faster than mathias's.
-
-        # check if we're in a git repo. (fast)
-        git rev-parse --is-inside-work-tree &>/dev/null || return
-
-        # check for what branch we're on. (fast)
-        #   if… HEAD isn’t a symbolic ref (typical branch),
-        #   then… get a tracking remote branch or tag
-        #   otherwise… get the short SHA for the latest commit
-        #   lastly just give up.
-        branchName="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
-            git describe --all --exact-match HEAD 2> /dev/null || \
-            git rev-parse --short HEAD 2> /dev/null || \
-            echo '(unknown)')";
-
-        # Check for unstaged changes.
-  			if ! $(git diff-files --quiet --ignore-submodules --); then
-  				s+='!';
-  			fi;
-
-  			# Check for untracked files.
-  			if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-  				s+='?';
-  			fi;
-
-  			# Check for stashed files.
-  			if $(git rev-parse --verify refs/stash &>/dev/null); then
-  				s+='$';
-        fi;
-
-        [ -n "${s}" ] && s=" [${s}]";
-        echo -e "${1}${branchName}${2}${s}";
-
-        return
-    }
-
-    # ------------------------------------------------------------------
-    # | Prompt string                                                  |
-    # ------------------------------------------------------------------
-
-    PS1="\[\033]0;\w\007\]"                                 # terminal title (set to the current working directory)
-    PS1+="\n\[$bold\]"
-    PS1+="\[$(usernamehost)\]"                              # username at host
-    PS1+="\[$green\]\w"                                     # working directory
-    PS1+="\$(prompt_git \"$white on $purple\" \"$cyan\")"   # git repository details
-    PS1+="\n"
-    PS1+="\[$reset$white\]\\$ \[$reset\]"
-
-    export PS1
-
-    # ------------------------------------------------------------------
-    # | Subshell prompt string                                         |
-    # ------------------------------------------------------------------
-
-    export PS2="⚡ "
-
-
-    # ------------------------------------------------------------------
-    # | Debug prompt string  (when using `set -x`)                     |
-    # ------------------------------------------------------------------
-
-    # When debugging a shell script via `set -x` this tricked-out prompt is used.
-
-    # The first character (+) is used and repeated for stack depth
-    # Then, we log the current time, filename and line number, followed by function name, followed by actual source line
-
-    # FWIW, I have spent hours attempting to get time-per-command in here, but it's not possible. ~paul
-    export PS4='+ \011\e[1;30m\t\011\e[1;34m${BASH_SOURCE}\e[0m:\e[1;36m${LINENO}\e[0m \011 ${FUNCNAME[0]:+\e[0;35m${FUNCNAME[0]}\e[1;30m()\e[0m:\011\011 }'
-
-
-    # shoutouts:
-    #   https://github.com/dholm/dotshell/blob/master/.local/lib/sh/profile.sh is quite nice.
-    #   zprof is also hot.
-
-}
-
-
-
-set_prompts
-unset set_prompts
+# Autocorrect typos in path names when using `cd`
+shopt -s cdspell;
