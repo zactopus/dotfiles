@@ -1,65 +1,135 @@
-# mostly copied from paulirish's setup
-
 default_username='zac'
 
-# aliases for commands
-if [ -f ~/.aliases ]; then
-    . ~/.aliases
-fi
-
-# super z jumping
-if [ -f ~/.scripts/z.sh ]; then
-    . ~/.scripts/z.sh
-fi
-
-# colours
+if which thefuck > /dev/null; then
+    eval "$(thefuck --alias)"
+fi;
 
 if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-	export TERM=gnome-256color
+    export TERM=gnome-256color
 elif infocmp xterm-256color >/dev/null 2>&1; then
-	export TERM=xterm-256color
+    export TERM=xterm-256color
 fi
 
-if tput setaf 1 &> /dev/null; then
-	tput sgr0
-	if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
-		MAGENTA=$(tput setaf 9)
-		ORANGE=$(tput setaf 172)
-		GREEN=$(tput setaf 190)
-		PURPLE=$(tput setaf 141)
-		WHITE=$(tput setaf 255)
-	else
-		MAGENTA=$(tput setaf 5)
-		ORANGE=$(tput setaf 4)
-		GREEN=$(tput setaf 2)
-		PURPLE=$(tput setaf 1)
-		WHITE=$(tput setaf 7)
-	fi
-	BOLD=$(tput bold)
-	RESET=$(tput sgr0)
-else
-	MAGENTA="\033[1;31m"
-	ORANGE="\033[1;33m"
-	GREEN="\033[1;32m"
-	PURPLE="\033[1;35m"
-	WHITE="\033[1;35m"
-	BOLD=""
-	RESET="\033[m"
-fi
+set_prompts() {
 
-# Fastest possible way to check if repo is dirty. a savior for the WebKit repo.
-function parse_git_dirty() {
-   git diff --quiet --ignore-submodules HEAD 2>/dev/null; [ $? -eq 1 ] && echo '*'
+    local black="" blue="" bold="" cyan="" green="" orange="" \
+          purple="" red="" reset="" white="" yellow=""
+
+    local dateCmd=""
+
+    reset="\e[0m"
+
+    black="\e[1;30m"
+    blue="\e[1;34m"
+    cyan="\e[1;36m"
+    green="\e[1;32m"
+    orange="\e[1;33m"
+    purple="\e[1;35m"
+    red="\e[1;31m"
+    magenta="\e[1;31m"
+    violet="\e[1;35m"
+    white="\e[1;37m"
+    yellow="\e[1;33m"
+
+    # Only show username/host if not default
+    function usernamehost() {
+
+        # Highlight the user name when logged in as root.
+        if [[ "${USER}" == *"root" ]]; then
+            userStyle="${red}";
+        else
+            userStyle="${magenta}";
+        fi;
+
+        userhost=""
+        userhost+="\[${userStyle}\]$USER "
+        userhost+="${white}at "
+        userhost+="${orange}$HOSTNAME "
+        userhost+="${white}in"
+
+        if [ $USER != "$default_username" ]; then echo $userhost ""; fi
+    }
+
+
+    function prompt_git() {
+        local s='';
+        # this is >5x faster than mathias's.
+
+        # check if we're in a git repo. (fast)
+        git rev-parse --is-inside-work-tree &>/dev/null || return
+
+        # check for what branch we're on. (fast)
+        #   if… HEAD isn’t a symbolic ref (typical branch),
+        #   then… get a tracking remote branch or tag
+        #   otherwise… get the short SHA for the latest commit
+        #   lastly just give up.
+        branchName="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
+            git describe --all --exact-match HEAD 2> /dev/null || \
+            git rev-parse --short HEAD 2> /dev/null || \
+            echo '(unknown)')";
+
+        # Check for unstaged changes.
+  			if ! $(git diff-files --quiet --ignore-submodules --); then
+  				s+='!';
+  			fi;
+
+  			# Check for untracked files.
+  			if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+  				s+='?';
+  			fi;
+
+  			# Check for stashed files.
+  			if $(git rev-parse --verify refs/stash &>/dev/null); then
+  				s+='$';
+        fi;
+
+        [ -n "${s}" ] && s=" [${s}]";
+        echo -e "${1}${branchName}${2}${s}";
+
+        return
+    }
+
+    # ------------------------------------------------------------------
+    # | Prompt string                                                  |
+    # ------------------------------------------------------------------
+
+    PS1="\[\033]0;\w\007\]"                                 # terminal title (set to the current working directory)
+    PS1+="\n\[$bold\]"
+    PS1+="\[$(usernamehost)\]"                              # username at host
+    PS1+="\[$green\]\w"                                     # working directory
+    PS1+="\$(prompt_git \"$white on $purple\" \"$cyan\")"   # git repository details
+    PS1+="\n"
+    PS1+="\[$reset$white\]\\$ \[$reset\]"
+
+    export PS1
+
+    # ------------------------------------------------------------------
+    # | Subshell prompt string                                         |
+    # ------------------------------------------------------------------
+
+    export PS2="⚡ "
+
+
+    # ------------------------------------------------------------------
+    # | Debug prompt string  (when using `set -x`)                     |
+    # ------------------------------------------------------------------
+
+    # When debugging a shell script via `set -x` this tricked-out prompt is used.
+
+    # The first character (+) is used and repeated for stack depth
+    # Then, we log the current time, filename and line number, followed by function name, followed by actual source line
+
+    # FWIW, I have spent hours attempting to get time-per-command in here, but it's not possible. ~paul
+    export PS4='+ \011\e[1;30m\t\011\e[1;34m${BASH_SOURCE}\e[0m:\e[1;36m${LINENO}\e[0m \011 ${FUNCNAME[0]:+\e[0;35m${FUNCNAME[0]}\e[1;30m()\e[0m:\011\011 }'
+
+
+    # shoutouts:
+    #   https://github.com/dholm/dotshell/blob/master/.local/lib/sh/profile.sh is quite nice.
+    #   zprof is also hot.
+
 }
 
-function parse_git_branch() {
-	git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
-}
 
-# Only show username/host if not default
-function usernamehost() {
-	if [ $USER != $default_username ]; then echo "${MAGENTA}$USER ${WHITE}at ${ORANGE}$HOSTNAME ${WHITE}in "; fi
-}
 
-# the output
-PS1="\[\e]2;$PWD\[\a\]\[\e]1;\]$(basename "$(dirname "$PWD")")/\W\[\a\]${BOLD}\$(usernamehost)\[$GREEN\]\w\[$WHITE\]\$([[ -n \$(git branch 2> /dev/null) ]] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\n\$ \[$RESET\]"
+set_prompts
+unset set_prompts
