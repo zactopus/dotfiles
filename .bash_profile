@@ -19,7 +19,6 @@ shopt -s nocaseglob;
 shopt -s cdspell;
 
 # tab complete branches in git
-
-if [ -f ~/.git-completion.bash ]; then
-  . ~/.git-completion.bash
+if [ -f ~/.scripts/git-autocompletion.sh ]; then
+  . ~/.scripts/git-autocompletion.sh
 fi
