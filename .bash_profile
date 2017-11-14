@@ -17,3 +17,9 @@ shopt -s nocaseglob;
 
 # Autocorrect typos in path names when using `cd`
 shopt -s cdspell;
+
+# tab complete branches in git
+
+if [ -f ~/.git-completion.bash ]; then
+  . ~/.git-completion.bash
+fi
