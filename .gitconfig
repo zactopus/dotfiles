@@ -1,6 +1,6 @@
 [user]
   name = Zac Colley
-  email = hi@zaccolley.com
+  email = zac@clubpenguin.email
 [alias]
   s = status -s
   df = diff --color --color-words --abbrev
