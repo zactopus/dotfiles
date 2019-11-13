@@ -32,3 +32,6 @@ export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/b
 
 # turn off the zsh warning
 export BASH_SILENCE_DEPRECATION_WARNING=1
+
+# add /usr/local/bin to path
+export PATH=/usr/local/bin:$PATH
