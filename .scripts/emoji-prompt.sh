@@ -1,9 +1,8 @@
-# https://github.com/alextea/bash-emoji
 random_emoji() {
   # Seed random generator
   RANDOM=$$$(date +%s)
 
-  local face_emoji=(😈 👹 👺 🤡 💩 👻 ☠️ 👽 👾 🤖 🎃 👨🏻 🧔🏻 🕵🏻‍ 👨🏻‍🎤 👨🏻‍💻 👨🏻‍🔧 👨🏻‍⚖️ 🤵🏻 🎅🏻 🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🙈 🙉 🙊 🐔 🐧 🐦 🐤 🐥)
+  local face_emoji=(😈 👹 👺 🤡 💩 👻 ☠️ 👽 👾 🤖 🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🙈 🙉 🙊 🐔 🐧 🐦 🐤 🐥)
   local folder_emoji=(🦷 💅 🧶 👠 🎩 👑 👓 🐛 🐙 🦀 🐡 🐟 🐳 🌵 🌳 🍄 🌼 🌞 🌝 🌛 🔥 🌈 🌤 🌧 ⛄️ ☂️ 🌊 🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🍈 🍒 🍑 🥭 🍍 🥥 🥝 🍅 🍆 🥑 🥦 🌶 🌽 🥐 🥖 🧀 🍳 🥩 🍖 🦴 🌭 🍔 🍟 🍕 🍝 🍣 🍤 🍙 🍦 🍰 🍭 🍬 🍩 🍪 🍼 ☕️ 🍺 🍷 🍾 🍽 🏆 🏅 🎪 🎬 🎨 🎲 🎤 🎧 🎹 🥁 🎸 🎮 🧩 🚗 🚕 🚙 🚌 🚎 🏎 🚓 🚑 🚒 🚐 🚚 🚛 🚜 🚲 🚨 🚡 🚝 🚄 🚅 🚂 🚇 ✈️ 🛫 🚀 🛸 🚁 🛶 ⛵️ 🚤 🛳 🚢 ⚓️ 🚧 🚦 🗿 🗽 🗼 🏰 🏯 🎡 🎠 ⛱ 🏖 🏝 🌋 ⛰ 🗻 ⛺️ 🏠 🏚 🏭 🏢 🏛 ⛩ 🌅 🌄 🎇 🎆 🌇 🌆 🏙 🌃 📱 💻 🖥 🕹 💽 💾 💿 📀 📼 📷 ☎️ 🧭 ⏱ ⏰ ⌛️ 📡 💡 🧯 💸 💰 💎 🧰 🛠 ⚙️ 🧲 🔫 🧨 🔮 🧿 💈 💊 🚽 🛎 🔑 🧸 🖼 🛍 🎁 🎈 🎏 🎀 🎊 🎉 🎎 🏮 💌 📫 📮 📕 📌 📍 📝 ✏️ 🔒 ❤️ 🧡 💛 💚 💙 💜 ☮️ ☯️ ⚛️ ☢️ ☣️ 🆚 🆘 🛑 💯 🔞 🚷 🚳 🚭 ⚠️ 🚸 ♻️ ✳️ Ⓜ️ 🌀 ♿️ 🛄 🚼 🚻 🆗 🆒 🆕 📣 🔔 💬)
 
   local day=$(date +%d)
@@ -28,6 +27,9 @@ random_emoji() {
   elif [[ $month -eq 12 && $day -eq 31 ]]; then
     # new years eve
     folder_emoji=(🍾 🥂 🎊 🎉)
+  elif [[ $month -eq 1 && $day -eq 2 ]]; then
+    # my birthday
+    folder_emoji=(🎁)
   fi
 
   local array=("${face_emoji[@]}")
