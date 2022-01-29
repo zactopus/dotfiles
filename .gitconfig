@@ -1,6 +1,5 @@
 [user]
   name = Zac Colley
-  email = zac@clubpenguin.email
 [alias]
   s = status -s
   df = diff --color --color-words --abbrev
@@ -20,7 +19,11 @@
   added = yellow
   changed = green
   untracked = cyan
-[merge]
-  log = true
+[core]
+  editor = nano
 [credential]
   helper = cache
+[merge]
+  log = true
+[push]
+  default = current
